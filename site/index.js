@@ -1,6 +1,7 @@
 // 'npm run devStart' in console to run
 // runs on localhost:3000
 // requires installation of oracledb, express, nodemon, ejs
+// also chart.js
 // I also installed Oracle XE 21 and had to set ORACLE_HOME & other environment variables
 
 // oracle setup
