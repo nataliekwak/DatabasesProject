@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head> 
+
+
 <html lang="en">
 <head>
     <style>
@@ -13,30 +19,59 @@
 </head>
 <body>
     Header (Sample data - first 5 country rows)
-
     <br><br>
 
-    
-    <div>
+    <!-- Buttons + Canvas -->
+    <button id="0" type="button" >Button 0</button>
+    <button id="1" type="button" >Button 1</button>
+    <div id="chart-wrapper">
       <canvas id="myChart"></canvas>
     </div>
-    
+
+    <!-- Scripts for buttons + canvas-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
       const ctx = document.getElementById('myChart');
-    
-      new Chart(ctx, {
-        type: 'bar',
+
+      var getlabels = ["A","B","C","D","E"];
+      var getarea = [1,2,3,4,5];
+      var getpopulation = [6,7,8,9,10];
+      
+      /*
+      // This is all UF data
+      var querydata = JSON.parse(`<%- JSON.stringify(mydata) %>`);
+      var getlabels = [];
+      var getarea = [];
+      var getpopulation = [];
+      for(var i = 0; i < querydata.length; i++) {
+        getlabels.push(querydata[i].NAME);}
+      for(var i = 0; i < querydata.length; i++) {
+        getarea.push(querydata[i].AREA);}
+      for(var i = 0; i < querydata.length; i++) {
+        getpopulation.push(querydata[i].AREA + 10000);}
+        */
+
+      var chartvar = new Chart(ctx, {
+        type: 'line',
         data: {
-          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-          datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            borderWidth: 1
-          }]
+          labels: getlabels,
+          datasets: [
+            {
+              label: '# of Votes',
+              data: getarea,
+              borderWidth: 1
+            },
+            {
+              label: '# of Votes',
+              data: getpopulation,
+              borderWidth: 1
+            }
+          ]
         },
         options: {
+          responsive: true,
+          maintainAspectRatio: false,
           scales: {
             y: {
               beginAtZero: true
@@ -44,28 +79,28 @@
           }
         }
       });
+
+
+    // These buttons currently just make the data reverse
+    // Will make it properly cycle through stuff later
+    
+    document.getElementById("0").addEventListener('click', () => {
+      console.log("Button 0");
+      temp = getarea.reverse();
+      chartvar.data.datasets[0].data = temp;
+      chartvar.update();
+    })
+
+    document.getElementById("1").addEventListener('click', () => {
+      console.log("Button 1");
+      const chart = document.getElementById("myChart");
+      temp = getpopulation.reverse();
+      chartvar.data.datasets[1].data = temp;
+      chartvar.update();
+    })
+
     </script>
 
-    <table>
-        <tr>
-            <th>NAME</th>
-            <th>CODE</th>
-            <th>CAPITAL</th>
-            <th>PROVINCE</th>
-            <th>AREA</th>
-            <th>POPULATION</th>
-        </tr>
-        <% mydata.forEach(function(mydata) { %>
-        <tr>
-            <td><%=mydata.NAME%></td>
-            <td><%=mydata.CODE%></td>
-            <td><%=mydata.CAPITAL%></td>
-            <td><%=mydata.PROVINCE%></td>
-            <td><%=mydata.AREA%></td>
-            <td><%=mydata.POPULATION%></td>
-        </tr>
-        <% }); %>
-    </table> 
 
 </body>
 </html>

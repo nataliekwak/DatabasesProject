@@ -1,0 +1,10 @@
+.chartContainer{
+    text-align: center;
+}
+
+canvas{
+    text-align: center;
+    width: 80% !important;
+    height: 400px !important;
+    margin: 0 auto;
+}

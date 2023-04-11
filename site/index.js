@@ -30,6 +30,8 @@ async function database_get() {
 	}
 }
 
+app.use(express.static(__dirname + '/public'));
+
 app.set('view engine', 'ejs')
 app.get('/', (request, response) => {
 	// fetches the data, then sends it to be rendered
