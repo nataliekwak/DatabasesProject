@@ -18,52 +18,54 @@
     <meta name="viewport" content="width=device-width, intial-scale=1.0">
 </head>
 <body>
-    Header (Sample data - first 5 country rows)
-    <br><br>
-
+    <h1>California Accidents - SWITRS Data</h1>
     <!-- Buttons + Canvas -->
-    <button id="0" type="button" >Button 0</button>
-    <button id="1" type="button" >Button 1</button>
+    <h3>Query 1: Party size vs. Age</h3>
     <div id="chart-wrapper">
       <canvas id="myChart"></canvas>
     </div>
-
+    <div id="button-wrapper">
+      <button id="0" type="button" >Previous Query</button>
+      <button id="1" type="button" >Next Query</button>
+    </div>
     <!-- Scripts for buttons + canvas-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
       const ctx = document.getElementById('myChart');
 
+      /*
       var getlabels = ["A","B","C","D","E"];
       var getarea = [1,2,3,4,5];
       var getpopulation = [6,7,8,9,10];
+      */
       
-      /*
       // This is all UF data
       var querydata = JSON.parse(`<%- JSON.stringify(mydata) %>`);
       var getlabels = [];
       var getarea = [];
       var getpopulation = [];
       for(var i = 0; i < querydata.length; i++) {
-        getlabels.push(querydata[i].NAME);}
+        getlabels.push(querydata[i].AGE);}
       for(var i = 0; i < querydata.length; i++) {
-        getarea.push(querydata[i].AREA);}
+        getarea.push(querydata[i].AVERAGE);}
       for(var i = 0; i < querydata.length; i++) {
-        getpopulation.push(querydata[i].AREA + 10000);}
-        */
+        getpopulation.push(querydata[i].AVERAGE + 1);}
+        
 
+      Chart.defaults.font.size = 16;
       var chartvar = new Chart(ctx, {
         type: 'line',
         data: {
           labels: getlabels,
           datasets: [
             {
-              label: '# of Votes',
+              label: 'Data 1',
               data: getarea,
               borderWidth: 1
             },
             {
-              label: '# of Votes',
+              label: 'Data 2',
               data: getpopulation,
               borderWidth: 1
             }
@@ -73,9 +75,28 @@
           responsive: true,
           maintainAspectRatio: false,
           scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Age',
+                padding: {
+                    top: 10,
+                    bottom: 30
+                }
+              }
+            },
             y: {
-              beginAtZero: true
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Average party size',
+                padding: {
+                    top: 5,
+                    bottom: 5
+                }
+              }
             }
+            
           }
         }
       });

@@ -21,7 +21,17 @@ async function database_get() {
 			connectString : "(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=oracle.cise.ufl.edu)(PORT=1521))(CONNECT_DATA=(SID=orcl)))"
 		});
 		const data = await con.execute(
-			'SELECT * FROM COUNTRY WHERE ROWNUM <= 5',
+			`
+				SELECT
+					chp_person.age,
+					ROUND(AVG(chp_key.party_size),2) as average
+				FROM chp_person
+				JOIN chp_key ON
+					chp_person.case_id = chp_key.case_id
+				GROUP BY chp_person.age
+				ORDER BY chp_person.age ASC
+			`
+			//'SELECT * FROM COUNTRY WHERE ROWNUM <= 5',
 		);
 		//console.log(data);
 		return data.rows;
