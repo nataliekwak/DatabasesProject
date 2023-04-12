@@ -42,17 +42,20 @@
       
       // This is all UF data
       var querydata = JSON.parse(`<%- JSON.stringify(mydata) %>`);
+      var index = 0;
+      var que = querydata[index];
+
       var getlabels = [];
       var getarea = [];
       var getpopulation = [];
-      for(var i = 0; i < querydata.length; i++) {
-        getlabels.push(querydata[i].AGE);}
-      for(var i = 0; i < querydata.length; i++) {
-        getarea.push(querydata[i].AVERAGE);}
-      for(var i = 0; i < querydata.length; i++) {
-        getpopulation.push(querydata[i].AVERAGE + 1);}
-        
 
+      for(var i = 0; i < que.length; i++) {
+        var temp = que[i];
+        getlabels.push(temp.AGE);
+        getarea.push(temp.AVERAGE);
+        getpopulation.push(temp.AVERAGE + 1);
+      }
+        
       Chart.defaults.font.size = 16;
       var chartvar = new Chart(ctx, {
         type: 'line',
@@ -72,6 +75,16 @@
           ]
         },
         options: {
+          animation: {
+            x: {
+              duration: 500,
+              from: 0
+            },
+            y: {
+              duration: 300,
+              from: 500
+            }
+          },
           responsive: true,
           maintainAspectRatio: false,
           scales: {
@@ -107,16 +120,37 @@
     
     document.getElementById("0").addEventListener('click', () => {
       console.log("Button 0");
-      temp = getarea.reverse();
-      chartvar.data.datasets[0].data = temp;
+      //temp = getarea.reverse();
+      //chartvar.data.datasets[0].data = temp;
+      que = querydata[0];
+      getlabels.length = 0;
+      getarea.length = 0;
+      getpopulation.length = 0;
+      for(var i = 0; i < que.length; i++) {
+        var temp = que[i];
+        getlabels.push(temp.AGE);
+        getarea.push(temp.AVERAGE);
+        getpopulation.push(temp.AVERAGE + 1);
+      }
+      index = 0;
       chartvar.update();
     })
 
     document.getElementById("1").addEventListener('click', () => {
       console.log("Button 1");
-      const chart = document.getElementById("myChart");
-      temp = getpopulation.reverse();
-      chartvar.data.datasets[1].data = temp;
+      //const chart = document.getElementById("myChart");
+      //temp = getpopulation.reverse();
+      //chartvar.data.datasets[1].data = temp;
+      que = querydata[1];
+      getlabels.length = 0;
+      getarea.length = 0;
+      getpopulation.length = 0;
+      for(var i = 0; i < que.length; i++) {
+        var temp = que[i];
+        getlabels.push(temp.AGE);
+        getarea.push(temp.AVERAGE);
+        getpopulation.push(temp.AVERAGE + 1);
+      }
       chartvar.update();
     })
 

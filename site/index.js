@@ -31,10 +31,21 @@ async function database_get() {
 				GROUP BY chp_person.age
 				ORDER BY chp_person.age ASC
 			`
-			//'SELECT * FROM COUNTRY WHERE ROWNUM <= 5',
 		);
-		//console.log(data);
-		return data.rows;
+		const data2 = await con.execute(
+			`
+				SELECT
+					chp_person.age,
+					ROUND(AVG(chp_key.party_size),2) as average
+				FROM chp_person
+				JOIN chp_key ON
+					chp_person.case_id = chp_key.case_id
+				GROUP BY chp_person.age
+			`
+		);
+		console.log("Hello");
+		console.log([data2.rows, data.rows]);
+		return [data2.rows, data.rows];
 	} catch (err) {
 		console.error(err);
 	}
