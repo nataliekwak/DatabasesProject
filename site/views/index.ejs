@@ -20,7 +20,7 @@
 <body>
     <h1>California Accidents - SWITRS Data</h1>
     <!-- Buttons + Canvas -->
-    <h3>Query 1: Party size vs. Age</h3>
+    <h3 id="querytitle">Query 1: Party size vs. Age</h3>
     <div id="chart-wrapper">
       <canvas id="myChart"></canvas>
     </div>
@@ -28,67 +28,139 @@
       <button id="0" type="button" >Previous Query</button>
       <button id="1" type="button" >Next Query</button>
     </div>
+    
     <!-- Scripts for buttons + canvas-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
       const ctx = document.getElementById('myChart');
 
-      /*
-      var getlabels = ["A","B","C","D","E"];
-      var getarea = [1,2,3,4,5];
-      var getpopulation = [6,7,8,9,10];
-      */
-      
-      // This is all UF data
+            // This is all UF data
       var querydata = JSON.parse(`<%- JSON.stringify(mydata) %>`);
       var index = 0;
       var que = querydata[index];
 
-      var getlabels = [];
-      var getarea = [];
-      var getpopulation = [];
+      var X1 = [];
+      var Y1 = [];
+      var Y2 = [];
+      var Y3 = [];
+  
+      var qtitles = [
+        "Query 0: Dataset size",
+        "Query 1: Cellphone accidents by year",
+        "Query 2: Fatalities by vehicle make",
+        "Query 3: Victim death count by type for DUI accidents",
+        "Query 4: Fatalities by age of vehicle",
+        "Query 5: Ratio of violations",
+        "Query 6: Fatalities by gender",
+        "Query 7: Fatalities between 12am and 6am accounting for weather"
+      ];
 
+      var qlabels = [
+        [""],
+        ["Cellphone injuries", "Cellphone hands-free injuries", ""],
+        [""],
+        ["Pedestrian", "Bicyclist", "Motorist"],
+        [""],
+        [""],
+        ["Male", "Female", ""],
+        ["Wet weather deaths", "Dry weather deaths", ""],
+        [""],
+        [""]
+      ];
+
+      var qaxes = [
+        [""],
+        ["Year", "Number of cellphone injuries"],
+        ["Vehicle make", "Ratio of fatalities"],
+        ["Year", "Death Count"],
+        ["Age of vehicle", "Ratio of fatalities"],
+        ["", ""],
+        ["Year", "Fatalities"],
+        ["Year", "Number of accidents"],
+        ["", ""],
+        ["", ""],
+        ["", ""],
+        ["", ""],
+      ]
+
+      var qexplain = [
+      `
+      This query shows the average party size for each
+      age group. The conclusion we can draw is that there
+      is minor variation in party size, with each age
+      averaging at 2 party members in an collision.
+
+      `,
+      `
+      This query compares all different makes of car for
+      their safety, by comparing the ratio of non-fatal
+      accidents to fatal accidents
+      `,
+      `
+      This query compares the different types of victim
+      death for accidents where a drunk driver is involved.
+      `
+      ];
+
+      colorlist_blank = [];
+      
+      colorlist = [];
+      for (i = 0; i < 30; i++) {
+        cr=Math.max( 20, Math.min( (20+(i*20)) , 255) )
+        cg=Math.max( 20, Math.min( (200-(i*20)) , 255) )
+        cb=Math.max( 20, Math.min( (200-(i*1)) , 255) )
+        colorlist[i] = "#" + cr.toString(16) + cg.toString(16) + cb.toString(16);
+        console.log(colorlist[i]);
+      }
+
+      //document.getElementById("queryexplain").innerHTML = qexplain[index];
+      document.getElementById("querytitle").innerHTML = qtitles[index];
+
+      /*
       for(var i = 0; i < que.length; i++) {
         var temp = que[i];
-        getlabels.push(temp.AGE);
-        getarea.push(temp.AVERAGE);
-        getpopulation.push(temp.AVERAGE + 1);
+        X1.push(temp.YEAR);
+        Y1.push(temp.CELLPHONE_INJURIES);
       }
+      */
         
       Chart.defaults.font.size = 16;
       var chartvar = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: getlabels,
+          labels: X1,
           datasets: [
-            {
-              label: 'Data 1',
-              data: getarea,
-              borderWidth: 1
-            },
-            {
-              label: 'Data 2',
-              data: getpopulation,
-              borderWidth: 1
-            }
+            {data: Y1, borderWidth: 1},
+            {data: Y2, borderWidth: 1},
+            {data: Y3, borderWidth: 1},
           ]
         },
         options: {
+          plugins:{
+          tooltip: {
+            callbacks: {}
+          },
+          legend: {
+            display: false
+          }
+          },
+          arc: {
+            backgroundColor: '#ffffff',
+          },
           animation: {
-            x: {
-              duration: 500,
-              from: 0
-            },
-            y: {
-              duration: 300,
-              from: 500
-            }
+            x: {duration: 500, from: 0},
+            y: {duration: 300, from: 500},
           },
           responsive: true,
           maintainAspectRatio: false,
           scales: {
             x: {
+              ticks: {
+                display: true,
+                stepSize: 1,
+                autoSkip: true
+              },
               title: {
                 display: true,
                 text: 'Age',
@@ -99,6 +171,11 @@
               }
             },
             y: {
+              ticks: {
+                display: true,
+                stepSize: 1,
+                autoSkip: true
+              },
               beginAtZero: true,
               title: {
                 display: true,
@@ -114,45 +191,133 @@
         }
       });
 
+    swapchart(que);
 
-    // These buttons currently just make the data reverse
-    // Will make it properly cycle through stuff later
-    
+    // Buttons that swap charts
+
     document.getElementById("0").addEventListener('click', () => {
       console.log("Button 0");
-      //temp = getarea.reverse();
-      //chartvar.data.datasets[0].data = temp;
-      que = querydata[0];
-      getlabels.length = 0;
-      getarea.length = 0;
-      getpopulation.length = 0;
-      for(var i = 0; i < que.length; i++) {
-        var temp = que[i];
-        getlabels.push(temp.AGE);
-        getarea.push(temp.AVERAGE);
-        getpopulation.push(temp.AVERAGE + 1);
+      if (index > 0) {
+        index = index - 1;
+        que = querydata[index];
+        swapchart(que);
       }
-      index = 0;
-      chartvar.update();
     })
 
     document.getElementById("1").addEventListener('click', () => {
       console.log("Button 1");
-      //const chart = document.getElementById("myChart");
-      //temp = getpopulation.reverse();
-      //chartvar.data.datasets[1].data = temp;
-      que = querydata[1];
-      getlabels.length = 0;
-      getarea.length = 0;
-      getpopulation.length = 0;
+      if (index < 7) {
+        index = index + 1;
+        que = querydata[index];
+        swapchart(que);
+      }
+    })
+
+    function swapchart(que) {
+      console.log("Swapping chart")
+      X1.length = 0;
+      Y1.length = 0;
+      Y2.length = 0;
+      Y3.length = 0;
+
+      chartvar.config.type = 'line';
+      chartvar.config.data.datasets[0].backgroundColor = ["#eb6434"];
+      chartvar.config.data.datasets[1].backgroundColor = ["#3bbaf6"];
+      chartvar.config.data.datasets[2].backgroundColor = ["#b77dff"];
+      chartvar.config.data.datasets[0].borderColor = ["#eb6434"];
+      chartvar.config.data.datasets[1].borderColor = ["#3bbaf6"];
+      chartvar.config.data.datasets[2].borderColor = ["#b77dff"];
+
+      chartvar.config.options.scales.x.ticks.display = true;
+      chartvar.config.options.scales.x.ticks.autoSkip = true;
+      chartvar.config.options.scales.y.ticks.display = true;
+      chartvar.config.options.scales.y.ticks.autoSkip = true;
+
+      chartvar.config.options.scales.x.title.text = qaxes[index][0];
+      chartvar.config.options.scales.y.title.text = qaxes[index][1];
+
+      chartvar.config.data.datasets[0].label = qlabels[index][0]
+      chartvar.config.data.datasets[1].label = qlabels[index][1]
+      chartvar.config.data.datasets[2].label = qlabels[index][2]
+
+      chartvar.config.options.scales.y.ticks.stepSize = 1;
+
+      chartvar.config.options.plugins.legend.display = false;
+
+      chartvar.config.options.plugins.tooltip.callbacks = {};
+
+      q0labels = ["Number of cases", "Number of involved people"];
+
+      if (index == 0) {
+        X1.push("");
+        Y1.push(0);
+      }
+
       for(var i = 0; i < que.length; i++) {
         var temp = que[i];
-        getlabels.push(temp.AGE);
-        getarea.push(temp.AVERAGE);
-        getpopulation.push(temp.AVERAGE + 1);
+        colorlist_blank = [];
+        if (index == 0) {
+            X1.push(q0labels[i]);
+            Y1.push(temp.DATA_SIZE);
+            chartvar.config.type = 'bar';
+        } else if (index == 1) {
+            X1.push(temp.YEAR);
+            Y1.push(temp.CELLPHONE_INJURIES);
+            Y2.push(temp.CELLPHONE_HANDS_FREE);
+            chartvar.config.options.plugins.legend.display = true;
+            //Y2.push(temp.AVERAGE);
+        } else if (index == 2) {
+            X1.push(temp.AGE);
+            Y1.push(temp.AVERAGE);
+            //Y2.push(temp.AVERAGE);
+            chartvar.config.options.scales.y.ticks.stepSize = 0.01;
+            chartvar.config.options.scales.x.ticks.autoSkip = false;
+        } else if (index == 3) {
+            X1.push(temp.GETYEAR);
+            Y1.push(temp.PEDESTRIAN);
+            Y2.push(temp.BICYCLIST);
+            Y3.push(temp.MOTORCYCLIST);
+            chartvar.config.options.plugins.legend.display = true;
+        } else if (index == 4) {
+            X1.push(temp.AGE_GROUP);
+            Y1.push(temp.RATIO);
+            chartvar.config.options.scales.y.ticks.stepSize = 0.01;
+        } else if (index == 5) {
+            chartvar.config.options.scales.x.ticks.display = false;
+            X1.push(temp.PCF_VIOLATION_CATEGORY);
+            Y1.push(temp.TOTAL_SEVERE_INJURIES);
+            chartvar.config.type = 'doughnut';
+            chartvar.config.data.datasets[0].backgroundColor = colorlist;
+            chartvar.config.options.plugins.legend.display = true;
+            chartvar.config.options.scales.y.ticks.display = false;
+            chartvar.config.options.plugins.tooltip.callbacks = {
+              label: function(context){
+                var label = context.label,
+                currentValue = context.raw,
+                total = context.chart._metasets[context.datasetIndex].total;
+                var percentage = parseFloat((currentValue/total*100).toFixed(1));
+                return label + ": " +currentValue + ' (' + percentage + '%)';
+              }
+            }
+        } else if (index == 6) {
+            X1.push(temp.YEAR);
+            Y1.push(temp.MALE_DEATHS);
+            Y2.push(temp.FEMALE_DEATHS);
+            chartvar.config.options.plugins.legend.display = true;
+        } else if (index == 7) {
+            X1.push(temp.AGE_GROUP);
+            //Y1.push(temp.FATALITY_COUNTS);
+            Y1.push(temp.WET_DEATHS);
+            Y2.push(temp.DRY_DEATHS);
+            chartvar.config.options.plugins.legend.display = true;
+        }
       }
+
+
       chartvar.update();
-    })
+      document.getElementById("querytitle").innerHTML = qtitles[index];
+      //document.getElementById("queryexplain").innerHTML = qexplain[index];
+    }
 
     </script>
 
